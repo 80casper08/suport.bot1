@@ -69,9 +69,6 @@ async def receive_question(message: Message, state: FSMContext):
     await bot.send_message(ADMIN_ID, f"📨 Нова заявка від @{message.from_user.username}:\n{message.text}")
     await message.answer("✅ Дякуємо! Ми скоро з вами зв’яжемось.", reply_markup=menu)
     await state.clear()
-@dp.message()
-async def get_chat_id(message: types.Message):
-    await message.answer(f"Chat ID: {message.chat.id}")
 
 async def main():
     await dp.start_polling(bot)
