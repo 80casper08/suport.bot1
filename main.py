@@ -45,7 +45,7 @@ menu = ReplyKeyboardMarkup(
     resize_keyboard=True
 )
 
-@dp.message(F.command("start"))
+@dp.message(F.text == "/start")
 async def start(message: Message):
     await message.answer("👋 Привіт! Я бот підтримки. Чим можу допомогти?", reply_markup=menu)
 
