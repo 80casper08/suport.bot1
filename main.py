@@ -47,8 +47,19 @@ menu = ReplyKeyboardMarkup(
 
 @dp.message(F.text == "/start")
 async def start(message: Message):
+    full_name = message.from_user.full_name
+    username = message.from_user.username or "немає"
+    user_id = message.from_user.id
+
     await message.answer("👋 Привіт! Я бот підтримки. Чим можу допомогти?", reply_markup=menu)
 
+    await bot.send_message(ADMIN_ID,
+        f"🔔 <b>Новий запуск бота</b>\n"
+        f"🆔 ID: <code>{user_id}</code>\n"
+        f"👤 Імʼя: {full_name}\n"
+        f"📛 Username: @{username}",
+        parse_mode="HTML"
+    )
 
 @dp.message(F.text == "📞 Зв’язатися з оператором")
 async def contact_operator(message: Message):
