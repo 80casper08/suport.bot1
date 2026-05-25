@@ -10,7 +10,7 @@ questions = [
     },
     {
         "text": "Перед початком тестування дозволено ставити плату на стіл BOT стороною як зазначено на фото??",
-        "image": "https://github.com/80casper08/suport.bot1/blob/main/images/1.jpg",
+        "image": "https://raw.githubusercontent.com/80casper08/suport.bot1/main/images/1.jpg",
         "options": [
             ("Ні", True),
             ("Так", False),
