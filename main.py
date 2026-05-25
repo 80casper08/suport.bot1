@@ -22,7 +22,10 @@ def home():
 def ping():
     return "OK", 200
 
-Thread(target=lambda: app.run(host="0.0.0.0", port=8080)).start()
+Thread(
+    target=lambda: app.run(host="0.0.0.0", port=8080),
+    daemon=True
+).start()
 
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
@@ -176,54 +179,26 @@ def main_keyboard(user_id: int):
 async def cmd_start(message: types.Message):
     user = message.from_user
     user_id = user.id
-    full_name = user.full_name
-    username = f"@{user.username}" if user.username else "-"
 
-    # 🔒 якщо користувач заблокований — нічого не показуємо
+    # 🔒 Заблокований користувач
     if is_blocked(user_id):
-        await message.answer("🚫Бот тимчасово не працює🔐")
+        await message.answer("🚫 Бот тимчасово недоступний 🔐")
         return
 
-    # логування натискання /start
-    with open("logs.txt", "a", encoding="utf-8") as f:
-        f.write(f"{full_name} | {username} | {user_id} | Натиснув /start\n")
-
-    # створюємо approved.txt, якщо його нема
+    # ✅ Автоматично додаємо користувача
     if not os.path.exists("approved.txt"):
         open("approved.txt", "w").close()
 
-    # читаємо список дозволених користувачів
     with open("approved.txt", "r", encoding="utf-8") as f:
         approved = f.read().splitlines()
 
-    # якщо користувач не дозволений
     if str(user_id) not in approved:
-        if not is_pending(user_id):
-            add_pending(user_id, full_name, username)  # додаємо в pending
+        with open("approved.txt", "a", encoding="utf-8") as f:
+            f.write(f"{user_id}\n")
 
-            # кнопки для підтвердження адміну
-            keyboard = InlineKeyboardMarkup(
-                inline_keyboard=[
-                    [InlineKeyboardButton(text="✅ Дозволити", callback_data=f"approve_{user_id}")],
-                    [InlineKeyboardButton(text="❌ Заборонити", callback_data=f"deny_{user_id}")]
-                ]
-            )
-
-            for admin_id in ADMIN_IDS:
-                await bot.send_message(
-                    admin_id,
-                    f"👤 Новий користувач очікує підтвердження:\n\n"
-                    f"👤 {full_name}\n"
-                    f"🔗 {username}\n"
-                    f"🆔 {user_id}",
-                    reply_markup=keyboard
-                )
-        return  # користувачу нічого не показуємо
-
-    # якщо користувач дозволений — показуємо меню
     await message.answer(
-        "Вибери розділ для тесту:",
-        reply_markup=main_keyboard(user_id)  # тут main_keyboard враховує чи адмін
+        "📚 Вибери розділ для тесту:",
+        reply_markup=main_keyboard(user_id)
     )
 
 
